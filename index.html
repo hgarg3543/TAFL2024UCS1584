@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dfa Minimizer</title>
+  <link rel="icon" type="image/svg+xml" href="assets/tomato.svg">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo"></div>
+      <h1> TAMATAR MACHINE</h1>
+      <div style="font-size:12px; font-family:'JetBrains Mono', monospace; font-weight:700;"></div>
+    </header>
+
+    <div class="main">
+      <div class="sidebar">
+        <div>
+          <label>Sample DFA</label>
+          <div class="sample-btns">
+            <button class="sample-btn active" onclick="loadSample('simple')">Simple</button>
+            <button class="sample-btn" onclick="loadSample('redundant')">Redundant</button>
+            <button class="sample-btn" onclick="loadSample('unreachable')">Unreachable</button>
+            <button class="sample-btn" onclick="loadSample('complex')">Complex</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label>States (comma-separated)</label>
+          <input type="text" id="inp-states" value="q0,q1,q2,q3,q4">
+        </div>
+
+        <div class="field-group">
+          <label>Alphabet (comma-separated)</label>
+          <input type="text" id="inp-alpha" value="a,b">
+        </div>
+
+        <div class="field-group">
+          <label>Start state</label>
+          <input type="text" id="inp-start" value="q0">
+        </div>
+
+        <div class="field-group">
+          <label>Final states (comma-separated)</label>
+          <input type="text" id="inp-finals" value="q3,q4">
+        </div>
+
+        <div class="field-group">
+          <label>Transitions (state,symbol,next — one per line)</label>
+          <textarea id="inp-trans">q0,a,q1
+q0,b,q2
+q1,a,q3
+q1,b,q4
+q2,a,q3
+q2,b,q4
+q3,a,q3
+q3,b,q3
+q4,a,q4
+q4,b,q4</textarea>
+        </div>
+
+        <div id="error-msg" class="error-msg"></div>
+
+        <button class="btn primary" onclick="buildDFA()">Build DFA</button>
+      </div>
+
+      <div class="content">
+        <div class="viz-area" id="viz-area">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="step-indicator" id="step-indicator"></div>
+            <div class="progress-bar" style="width:120px;flex-shrink:0;">
+              <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="explanation" id="explanation">Build a DFA using the sidebar, or pick a sample to get started.</div>
+
+          <div class="graphs-wrapper" id="graphs-wrapper">
+            <div class="panel" id="main-graph-panel">
+              <div class="panel-title">Process Graph</div>
+              <svg id="dfa-svg" width="100%" height="340" style="min-height:280px;"></svg>
+            </div>
+            
+            <div class="panel" id="min-graph-panel" style="display:none;">
+              <div class="panel-title">Minimized Graph</div>
+              <svg id="min-svg" width="100%" height="340" style="min-height:280px;"></svg>
+            </div>
+          </div>
+
+          <div class="panel" id="table-panel" style="display:none">
+            <div class="panel-title" id="table-title">Partition table</div>
+            <div id="table-content"></div>
+          </div>
+
+          <div id="ba-panel" style="display:none">
+            <div class="panel-title" style="margin-bottom:12px;">Before vs After Stats</div>
+            <div class="before-after">
+              <div class="ba-card">
+                <div class="ba-title before">Original DFA</div>
+                <div id="ba-before"></div>
+              </div>
+              <div class="ba-card">
+                <div class="ba-title after">Minimized DFA</div>
+                <div id="ba-after"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls-bar">
+          <button class="btn" id="btn-restart" onclick="restart()" disabled>Restart</button>
+          <button class="btn icon" id="btn-prev" onclick="prevStep()" disabled>←</button>
+          <button class="btn icon" id="btn-playpause" onclick="togglePlay()" disabled>▶</button>
+          <button class="btn primary" id="btn-next" onclick="nextStep()" disabled>Next step →</button>
+          <div style="flex:1"></div>
+          <span class="speed-label">Speed</span>
+          <input type="range" id="speed-slider" min="1" max="5" value="3" step="1">
+          <span id="step-counter" style="font-family:'JetBrains Mono',monospace; font-weight:700; min-width:48px; text-align:right;">0 / 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
